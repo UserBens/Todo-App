@@ -9,24 +9,38 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $tasks = Task::latest()->get();
+        $tasks = Task::where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->get();
         return view('tasks', compact('tasks'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|max:255',
+            'title' => 'required',
             'due_date' => 'required|date',
-            'category' => 'required|in:fjm mobile,networking,desain,website,hardware,software,device'
+            'priority' => 'required',
+            'category' => 'required',
+            'pic' => 'required',
+            'file' => 'nullable|mimes:pdf,jpg,jpeg,png|max:2048'
         ]);
 
+        $filePath = null;
+
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('tasks', 'public');
+        }
+
         Task::create([
+            'user_id' => auth()->id(),
             'title' => $request->title,
             'description' => $request->description,
             'due_date' => $request->due_date,
             'priority' => $request->priority,
-            'category' => $request->category
+            'category' => $request->category,
+            'pic' => $request->pic,
+            'file' => $filePath,
         ]);
 
         return redirect()->back()->with('success', 'Task berhasil ditambahkan!');

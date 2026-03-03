@@ -14,6 +14,10 @@
 
         <div class="card shadow-lg">
             <div class="card-body">
+                <form action="{{ route('logout') }}" method="POST" class="text-end mb-3">
+                    @csrf
+                    <button class="btn btn-danger btn-sm">Logout</button>
+                </form>
 
                 <h3 class="mb-4 text-center">📝 My To Do List</h3>
 
@@ -40,62 +44,115 @@
                 </div>
 
                 {{--  FORM TAMBAH TASK  --}}
-                <div class="card shadow-sm mb-4 rounded-3 overflow-hidden">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">➕ Tambah Task Baru</h5>
+                <form action="{{ route('tasks.store') }}" method="POST" enctype="multipart/form-data" class="row g-3">
+                    @csrf
+
+                    {{-- Judul --}}
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Judul Task</label>
+                        <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
+                            value="{{ old('title') }}" placeholder="Contoh: Perbaikan printer ruang TU">
+
+                        @error('title')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
 
-                    <div class="card-body bg-light">
-                        <p class="text-muted">
-                            Isi form untuk menambahkan task baru.
-                            Pilih tanggal, prioritas, dan kategori dengan benar.
-                        </p>
+                    {{-- Due Date --}}
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Tanggal Target</label>
+                        <input type="date" name="due_date"
+                            class="form-control @error('due_date') is-invalid @enderror" value="{{ old('due_date') }}">
 
-                        <form action="{{ route('tasks.store') }}" method="POST" class="row g-3">
-                            @csrf
-
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Judul Task</label>
-                                <input type="text" name="title" class="form-control"
-                                    placeholder="Contoh: Perbaikan printer ruang TU" required>
+                        @error('due_date')
+                            <div class="invalid-feedback">
+                                {{ $message }}
                             </div>
-
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold">Tanggal Target</label>
-                                <input type="date" name="due_date" class="form-control" required>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold">Prioritas</label>
-                                <select name="priority" class="form-select">
-                                    <option value="low">Low</option>
-                                    <option value="medium" selected>Medium</option>
-                                    <option value="high">High</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold">Kategori</label>
-                                <select name="category" class="form-select" required>
-                                    <option value="">-- Pilih --</option>
-                                    <option value="fjm mobile">FJM Mobile</option>
-                                    <option value="networking">Networking</option>
-                                    <option value="desain">Desain</option>
-                                    <option value="website">Website</option>
-                                    <option value="hardware">Hardware</option>
-                                    <option value="software">Software</option>
-                                    <option value="device">Device</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100 fw-bold">
-                                    + Tambahkan
-                                </button>
-                            </div>
-                        </form>
+                        @enderror
                     </div>
-                </div>
+
+                    {{-- Priority --}}
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Prioritas</label>
+                        <select name="priority" class="form-select @error('priority') is-invalid @enderror">
+                            <option value="low" {{ old('priority') == 'low' ? 'selected' : '' }}>Low</option>
+                            <option value="medium" {{ old('priority', 'medium') == 'medium' ? 'selected' : '' }}>Medium
+                            </option>
+                            <option value="high" {{ old('priority') == 'high' ? 'selected' : '' }}>High</option>
+                        </select>
+
+                        @error('priority')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Category --}}
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Kategori</label>
+                        <select name="category" class="form-select @error('category') is-invalid @enderror">
+                            <option value="">-- Pilih --</option>
+                            @foreach (['fjm mobile', 'networking', 'desain', 'website', 'hardware', 'software', 'device'] as $cat)
+                                <option value="{{ $cat }}" {{ old('category') == $cat ? 'selected' : '' }}>
+                                    {{ ucfirst($cat) }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        @error('category')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Deskripsi --}}
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">Deskripsi</label>
+                        <textarea name="description" class="form-control @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
+
+                        @error('description')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- PIC --}}
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">PIC</label>
+                        <input type="text" name="pic" class="form-control @error('pic') is-invalid @enderror"
+                            value="{{ old('pic') }}" placeholder="Contoh: Budi">
+
+                        @error('pic')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Upload --}}
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Upload (PDF/Image)</label>
+                        <input type="file" name="file" class="form-control @error('file') is-invalid @enderror">
+
+                        @error('file')
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    {{-- Button --}}
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">
+                            + Tambahkan
+                        </button>
+                    </div>
+                </form>
                 {{-- FORM TAMBAH TASK --}}
 
                 <hr>
@@ -128,10 +185,19 @@
                                 <span class="badge bg-info text-dark">
                                     {{ ucfirst($task->category) }}
                                 </span>
+
+                                @if ($task->file)
+                                    <br>
+                                    <a href="{{ asset('storage/' . $task->file) }}" target="_blank"
+                                        class="btn btn-sm btn-outline-primary mt-2">
+                                        Lihat File
+                                    </a>
+                                @endif
                             </div>
 
                             <div>
-                                <form action="{{ route('tasks.complete', $task->id) }}" method="POST" class="d-inline">
+                                <form action="{{ route('tasks.complete', $task->id) }}" method="POST"
+                                    class="d-inline">
                                     @csrf
                                     <button class="btn btn-success btn-sm">
                                         ✔ Selesai

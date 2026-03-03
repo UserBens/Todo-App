@@ -12,4 +12,8 @@ class Task extends Model
 
     protected $guarded = ['id'];
     protected $dates = ['deleted_at']; // optional (Laravel 10+ sebenarnya tidak wajib)
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
 }

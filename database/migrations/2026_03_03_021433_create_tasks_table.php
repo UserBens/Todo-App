@@ -15,7 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('category', ['fjm mobile', 'networking', 'desain', 'website', 'hardware', 'software', 'device'
+            $table->enum('category', [
+                'fjm mobile',
+                'networking',
+                'desain',
+                'website',
+                'hardware',
+                'software',
+                'device'
             ]);
             $table->date('due_date');
             $table->time('due_time')->nullable();
@@ -23,8 +30,15 @@ return new class extends Migration
                 ->default('medium');
             $table->enum('status', ['pending', 'completed'])
                 ->default('pending');
+            $table->foreignId('user_id')
+                ->after('id')
+                ->constrained()
+                ->onDelete('cascade');
+            $table->text('description')->nullable();
+            $table->string('pic')->nullable();
+            $table->string('file')->nullable(); // path file upload
             $table->timestamp('completed_at')->nullable();
-            $table->timestamps();   
+            $table->timestamps();
             $table->softDeletes();
         });
     }

@@ -51,7 +51,7 @@
                     <div class="col-md-4">
                         <label class="form-label fw-bold">Judul Task</label>
                         <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
-                            value="{{ old('title') }}" placeholder="Contoh: Perbaikan printer ruang TU">
+                            value="{{ old('title') }}" placeholder="Contoh: Perbaikan jaringan internet di ruangan">
 
                         @error('title')
                             <div class="invalid-feedback">
@@ -167,6 +167,13 @@
                             <div>
                                 <h6 class="mb-1">{{ $task->title }}</h6>
 
+                                {{-- Description --}}
+                                @if ($task->description)
+                                    <p class="mb-1 text-muted small">
+                                        {{ $task->description }}
+                                    </p>
+                                @endif
+
                                 <small class="text-muted">
                                     📅 {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}
                                 </small>
@@ -233,6 +240,12 @@
                                 <h6 class="mb-1 text-decoration-line-through">
                                     {{ $task->title }}
                                 </h6>
+
+                                @if ($task->description)
+                                    <p class="mb-1 text-muted small text-decoration-line-through">
+                                        {{ $task->description }}
+                                    </p>
+                                @endif
 
                                 <small class="text-muted">
                                     📅 {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}
